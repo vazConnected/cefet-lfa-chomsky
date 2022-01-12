@@ -2,7 +2,7 @@ package grammar;
 
 import java.util.ArrayList;
 
-public class Rule implements Identifier{
+public class Rule implements Identifier {
 	private Character identifier;
 	private ArrayList< ArrayList<Identifier> > derivation;
 	
