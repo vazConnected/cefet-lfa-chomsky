@@ -45,4 +45,6 @@ pelo conjunto de regras: X -> Y1Z1, Z1 -> Y2Z2, ..., Zn-2 -> Yn-1Yn, em que Z1, 
 - Desenvolvedores: [Pedro Vaz](https://github.com/vazConnected) e [Ana Julia Velasque](https://github.com/anajvelasque);
 - Mentor: [Andrei Rimsa](https://github.com/rimsa).
 
+## Bibliotecas Externas
+- JSON in Java: [Sean Leary](https://github.com/stleary/JSON-java).
 
