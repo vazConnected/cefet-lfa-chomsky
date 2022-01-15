@@ -1,9 +1,9 @@
 package grammar;
 
 public class Element implements Identifier {
-	private Character element;
+	private String element;
 	
-	public Element(Character element) throws Exception {
+	public Element(String element) throws Exception {
 		if (element != null) {
 			this.element = element;
 		} else {
@@ -12,9 +12,8 @@ public class Element implements Identifier {
 	} 
 	
 	@Override
-	public Character getIdentifier() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getIdentifier() {
+		return element;
 	}
 
 }

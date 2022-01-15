@@ -6,5 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/holo_/OneDrive/Documentos/projects/LFA-Chomsky/external_jar/json-20211205.jar"/>
 	<classpathentry kind="output" path="src"/>
 </classpath>
