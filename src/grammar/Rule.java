@@ -3,10 +3,11 @@ package grammar;
 import java.util.ArrayList;
 
 public class Rule implements Identifier {
-	private String identifier;
-	private ArrayList< ArrayList<Identifier> > transitions;
+	private Character identifier;
+	private ArrayList< String > transitions;
 	
-	public Rule(String identifier) throws Exception {
+	public Rule(Character identifier) throws Exception {
+		this.transitions = new ArrayList< String >();
 		if (identifier != null) {
 			this.identifier = identifier;
 		} else {
@@ -24,23 +25,27 @@ public class Rule implements Identifier {
 	}
 	
 	@Override
-	public String getIdentifier() {
+	public Character getIdentifier() {
 		return this.identifier;
 	}
 
-	public void pushDerivation(ArrayList<Identifier> derivation) {
-		if (this.transitions.contains(derivation))
+	public void pushTransitions(String transition) {
+		if (this.transitions.contains(transition))
 			return;
 		
-		this.transitions.add(derivation);
+		this.transitions.add(transition);
 	}
 	
-	public void removeDerivation(ArrayList<Identifier> derivation) {
-		if (this.transitions.contains(derivation))
-			this.transitions.remove(derivation);
+	public void removeTransitions(String transition) {
+		if (this.transitions.contains(transition))
+			this.transitions.remove(transition);
 	}
 	
-	public ArrayList< ArrayList<Identifier> > getDerivations(){
+	public ArrayList< String > getTransitions(){
 		return this.transitions;
+	}
+	
+	public void setTransitions(ArrayList< String > transitions) {
+		this.transitions = transitions;
 	}
 }

@@ -3,12 +3,12 @@ package grammar;
 import java.util.HashSet;
 
 public class Grammar {
-	private Rule initialRule;
-	private HashSet<Element> alphabet;
-	private HashSet<Rule> rules;
+	public String initialRuleIdentifier;
+	public HashSet<Element> alphabet;
+	public HashSet<Rule> rules;
 	
-	private Grammar(Rule initialRule, HashSet<Element> alphabet, HashSet<Rule> rules) {
-		this.initialRule = initialRule;
+	public Grammar(String initialRuleIdentifier, HashSet<Element> alphabet, HashSet<Rule> rules) {
+		this.initialRuleIdentifier = initialRuleIdentifier;
 		this.alphabet = alphabet;
 		this.rules = rules;
 	}

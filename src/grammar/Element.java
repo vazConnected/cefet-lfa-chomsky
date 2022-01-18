@@ -1,18 +1,14 @@
 package grammar;
 
 public class Element implements Identifier {
-	private String element;
-	
-	public Element(String element) throws Exception {
-		if (element != null) {
-			this.element = element;
-		} else {
-			throw new Exception ("Sem elementos enviado.");
-		}
-	} 
-	
+	private Character element;
+
+	public Element(Character element) {
+		this.element = element;
+	}
+
 	@Override
-	public String getIdentifier() {
+	public Character getIdentifier() {
 		return element;
 	}
 

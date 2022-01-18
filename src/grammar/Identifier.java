@@ -1,5 +1,5 @@
 package grammar;
 
 public interface Identifier {
-	public String getIdentifier();
+	public Character getIdentifier();
 }
