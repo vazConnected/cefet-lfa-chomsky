@@ -1,6 +1,7 @@
 package grammar;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 public class Chomsky {
@@ -54,6 +55,46 @@ public class Chomsky {
 	};
 
 	private static Grammar removeUnusedRules(Grammar grammar) {
+		Iterator<Rule> rulesIterator = grammar.rules.iterator();
+		ArrayList<Rule> rulesToBeRemoved = new ArrayList<Rule>();
+		
+		while (rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			
+			if (currentRule.getTransitions().size() == 0)
+				rulesToBeRemoved.add(currentRule);
+		}
+		
+		
+		if(rulesToBeRemoved.size() > 0) {
+			HashSet<Rule> newSetOfRules = new HashSet<Rule>();
+			
+			for(int i = 0; i < rulesToBeRemoved.size(); i++) {
+				String identifier = rulesToBeRemoved.get(i).getIdentifier().toString();
+				grammar.rules.remove(rulesToBeRemoved.get(i));
+
+				// Remove ocorrencias da regra
+				Iterator<Rule> _rulesIterator = grammar.rules.iterator();
+				while (_rulesIterator.hasNext()) {
+					Rule _currentRule = _rulesIterator.next();
+					ArrayList<String> transitions = _currentRule.getTransitions();
+					
+					for(int j = 0; j < transitions.size(); j++) {
+						String currentTransition = transitions.get(j).replaceAll(identifier, "");;
+						transitions.set(j, currentTransition);
+					}
+					
+					while (transitions.remove("")); // Deleta transicoes em branco
+					
+					_currentRule.setTransitions(transitions);
+					newSetOfRules.add(_currentRule);
+					
+				}
+				
+				grammar.rules = newSetOfRules;
+			}
+		}
+		
 		return grammar;
 	};
 
