@@ -66,9 +66,15 @@ public class Main {
 		HashSet<Rule> rulesInHashSet = new HashSet<Rule>(rules.values());
 		Grammar grammar = new Grammar(start, elements, rulesInHashSet);
 		
+		
+		// Antes
+		Main.printFormatedGrammar(grammar);
+		
 		// Traduzir G para FNC
 		grammar = Chomsky.applyChomsky(grammar);
+		System.out.println("------------");
 
+		// Depois
 		Main.printFormatedGrammar(grammar);
 		
 		/*

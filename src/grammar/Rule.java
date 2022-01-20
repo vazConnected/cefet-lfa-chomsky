@@ -6,13 +6,9 @@ public class Rule implements Identifier {
 	private Character identifier;
 	private ArrayList< String > transitions;
 	
-	public Rule(Character identifier) throws Exception {
+	public Rule(Character identifier){
 		this.transitions = new ArrayList< String >();
-		if (identifier != null) {
-			this.identifier = identifier;
-		} else {
-			throw new Exception ("Regra sem identificador!");
-		}
+		this.identifier = identifier;
 	} 
 	
 	@Override
@@ -35,6 +31,16 @@ public class Rule implements Identifier {
 		
 		this.transitions.add(transition);
 	}
+	
+	public void pushTransitions(ArrayList<String> transitions) {
+		for (int i = 0; i < transitions.size(); i++) {
+			String currentTransition = transitions.get(i);
+			
+			if(!this.transitions.contains(currentTransition)) {
+				this.transitions.add(currentTransition);
+			}
+		}
+	} 
 	
 	public void removeTransitions(String transition) {
 		if (this.transitions.contains(transition))
