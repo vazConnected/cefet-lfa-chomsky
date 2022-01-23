@@ -11,6 +11,11 @@ public class Rule implements Identifier {
 		this.identifier = identifier;
 	} 
 	
+	public Rule(Character identifier, ArrayList<String> transitions){
+		this.transitions = transitions;
+		this.identifier = identifier;
+	} 
+	
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof Rule) {
@@ -54,4 +59,13 @@ public class Rule implements Identifier {
 	public void setTransitions(ArrayList< String > transitions) {
 		this.transitions = transitions;
 	}
+
+	public boolean isAnEndElementRule() {
+		if(transitions.size() == 1 && transitions.get(0).length() == 1) {
+			return Character.isLowerCase(transitions.get(0).charAt(0));
+		}
+		return false;
+	}
 }
+
+

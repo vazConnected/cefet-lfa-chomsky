@@ -1,6 +1,7 @@
 package grammar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -17,7 +18,7 @@ public class Chomsky {
 		}
 
 		return grammar;
-	};
+	}
 
 	private static Grammar removeUnitaryRules(Grammar grammar) {
 		Iterator<Rule> rulesIterator = grammar.rules.iterator();
@@ -52,7 +53,7 @@ public class Chomsky {
 		}
 
 		return grammar;
-	};
+	}
 
 	private static Grammar removeUnusedRules(Grammar grammar) {
 		Iterator<Rule> rulesIterator = grammar.rules.iterator();
@@ -96,15 +97,67 @@ public class Chomsky {
 		}
 		
 		return grammar;
-	};
+	}
 
 	private static Grammar reorganizeRulesToDerivationMaxSizeTwo(Grammar grammar) {
+		HashSet<Substitution> substitutions = new HashSet<Substitution>(); // <old, new>
+		HashSet<Rule> rulesToBeConsidered = grammar.getRulesWithBigTransitions();
+		
+		Iterator<Rule> rulesIterator = rulesToBeConsidered.iterator();
+		while (rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			
+			ArrayList<String> transitions = currentRule.getTransitions();
+			for(int i = 0; i < transitions.size(); i++) {
+				String currentTransition = transitions.get(i);
+				
+				if (currentTransition.length() >= 2) {
+					for (int j = 0; j < currentTransition.length(); j++) {
+						Character oldElement = currentTransition.charAt(j);
+
+						if ( Character.isLowerCase(oldElement) ) {
+							ArrayList<String> transition = new ArrayList<String>();
+							transition.add( oldElement.toString() );
+							
+							String newRuleIdentifier = grammar.createAndIndexRule( transition ).toString();
+							
+							Substitution substitution = new Substitution(oldElement.toString(), newRuleIdentifier);
+							substitutions.add(substitution);
+						}
+					}
+				}
+			}
+		}
+		
+		ArrayList<Substitution> charactersToBeSubstituted = new ArrayList<Substitution>(substitutions);
+		
+		rulesIterator = rulesToBeConsidered.iterator();
+		while (rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			
+			ArrayList<String> transitions = currentRule.getTransitions();
+			for (int i = 0; i < transitions.size(); i++) {
+				String currentTransition = transitions.get(i);
+				
+				for (int j = 0; j < charactersToBeSubstituted.size(); j++) {
+					String oldElement = charactersToBeSubstituted.get(j)._old;
+					String newElement = charactersToBeSubstituted.get(j)._new;
+					
+					if (currentTransition.contains(oldElement))
+						currentTransition = currentTransition.replace(oldElement, newElement);
+				}
+				transitions.set(i, currentTransition);
+			}
+			currentRule.setTransitions(transitions);
+			grammar.addRule(currentRule);
+		}
+		
 		return grammar;
-	};
+	}
 
 	private static Grammar substituteDerivationsWithSizeBiggerThanThree(Grammar grammar) {
 		return grammar;
-	};
+	}
 
 	public static Grammar applyChomsky(Grammar grammar) {
 		grammar = removeLambdaRules(grammar);
@@ -112,5 +165,27 @@ public class Chomsky {
 		grammar = removeUnusedRules(grammar);
 		grammar = reorganizeRulesToDerivationMaxSizeTwo(grammar);
 		return substituteDerivationsWithSizeBiggerThanThree(grammar);
+	}
+	
+	
+}
+
+class Substitution{
+	public String _old;
+	public String _new;
+	
+	public Substitution (String _old, String _new) {
+		this._new = _new;
+		this._old = _old;
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof Substitution) {
+			Substitution s = (Substitution) o;
+			if (s._old.equals(this._old)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
