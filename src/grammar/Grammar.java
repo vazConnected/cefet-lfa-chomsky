@@ -19,7 +19,7 @@ public class Grammar {
 		this.rulesToHashMap();
 	}
 
-	public HashSet<Rule> getRulesWithBigTransitions() {
+	public HashSet<Rule> getRulesWithTransitionsSizeEqualOrBiggerThan(int value) {
 		HashSet<Rule> rulesWithBigTransitions = new HashSet<Rule>();
 
 		Iterator<Rule> rulesIterator = this.rules.iterator();
@@ -27,7 +27,7 @@ public class Grammar {
 			Rule currentRule = rulesIterator.next();
 			ArrayList<String> transitions = currentRule.getTransitions();
 			for (int i = 0; i < transitions.size(); i++) {
-				if (transitions.get(i).length() >= 2) {
+				if (transitions.get(i).length() >= value) {
 					rulesWithBigTransitions.add(currentRule);
 					break;
 				}

@@ -101,7 +101,7 @@ public class Chomsky {
 
 	private static Grammar reorganizeRulesToDerivationMaxSizeTwo(Grammar grammar) {
 		HashSet<Substitution> substitutions = new HashSet<Substitution>(); // <old, new>
-		HashSet<Rule> rulesToBeConsidered = grammar.getRulesWithBigTransitions();
+		HashSet<Rule> rulesToBeConsidered = grammar.getRulesWithTransitionsSizeEqualOrBiggerThan(2);
 		
 		Iterator<Rule> rulesIterator = rulesToBeConsidered.iterator();
 		while (rulesIterator.hasNext()) {
@@ -143,7 +143,7 @@ public class Chomsky {
 					String oldElement = charactersToBeSubstituted.get(j)._old;
 					String newElement = charactersToBeSubstituted.get(j)._new;
 					
-					if (currentTransition.contains(oldElement))
+					if (currentTransition.contains(oldElement) && currentTransition.length() > 1)
 						currentTransition = currentTransition.replace(oldElement, newElement);
 				}
 				transitions.set(i, currentTransition);
@@ -156,6 +156,55 @@ public class Chomsky {
 	}
 
 	private static Grammar substituteDerivationsWithSizeBiggerThanThree(Grammar grammar) {
+		HashSet<Substitution> substitutions = new HashSet<Substitution>(); // <old, new>
+		HashSet<Rule> rulesToBeConsidered = grammar.getRulesWithTransitionsSizeEqualOrBiggerThan(3);
+		
+		Iterator<Rule> rulesIterator = rulesToBeConsidered.iterator();
+		while(rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			ArrayList<String> transitions = currentRule.getTransitions();
+			
+			for(int i = 0; i < transitions.size(); i++) {
+				String currentTransition = transitions.get(i);
+				int transitionSize = currentTransition.length();
+				
+				if (transitionSize >= 3) {
+					String newTransition = currentTransition.subSequence(transitionSize - 2, transitionSize).toString();
+					ArrayList<String> newTransitionsAL = new ArrayList<String>();
+					newTransitionsAL.add(newTransition);
+					
+					String newRuleIdentifier = grammar.createAndIndexRule(newTransitionsAL).toString();
+					
+					Substitution substitution = new Substitution(newTransition, newRuleIdentifier);
+					substitutions.add(substitution);
+				}
+			}
+		}
+		
+		ArrayList<Substitution> sequencesToBeSubstituted = new ArrayList<Substitution>(substitutions);
+		
+		rulesIterator = rulesToBeConsidered.iterator();
+		while (rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			
+			ArrayList<String> transitions = currentRule.getTransitions();
+			for (int i = 0; i < transitions.size(); i++) {
+				String currentTransition = transitions.get(i);
+				
+				for (int j = 0; j < sequencesToBeSubstituted.size(); j++) {
+					String oldElement = sequencesToBeSubstituted.get(j)._old;
+					String newElement = sequencesToBeSubstituted.get(j)._new;
+					
+					if (currentTransition.contains(oldElement))
+						currentTransition = currentTransition.replace(oldElement, newElement);
+				}
+				transitions.set(i, currentTransition);
+			}
+			currentRule.setTransitions(transitions);
+			grammar.addRule(currentRule);
+		}
+		
+		
 		return grammar;
 	}
 
@@ -164,9 +213,9 @@ public class Chomsky {
 		grammar = removeUnitaryRules(grammar);
 		grammar = removeUnusedRules(grammar);
 		grammar = reorganizeRulesToDerivationMaxSizeTwo(grammar);
-		return substituteDerivationsWithSizeBiggerThanThree(grammar);
+		grammar = substituteDerivationsWithSizeBiggerThanThree(grammar);
+		return grammar;
 	}
-	
 	
 }
 
