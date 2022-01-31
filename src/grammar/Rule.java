@@ -1,21 +1,23 @@
 package grammar;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class Rule implements Identifier {
 	private Character identifier;
-	private ArrayList< String > transitions;
-	
-	public Rule(Character identifier){
-		this.transitions = new ArrayList< String >();
+	private ArrayList<String> transitions;
+
+	public Rule(Character identifier) {
+		this.transitions = new ArrayList<String>();
 		this.identifier = identifier;
-	} 
-	
-	public Rule(Character identifier, ArrayList<String> transitions){
+	}
+
+	public Rule(Character identifier, ArrayList<String> transitions) {
 		this.transitions = transitions;
 		this.identifier = identifier;
-	} 
-	
+	}
+
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof Rule) {
@@ -24,10 +26,21 @@ public class Rule implements Identifier {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public Character getIdentifier() {
 		return this.identifier;
+	}
+
+	public void pushTransitions(Collection<String> transitions) {
+		Iterator<String> transitionsIterator = transitions.iterator();
+
+		while (transitionsIterator.hasNext()) {
+			String currentTransition = transitionsIterator.next();
+			if (!this.transitions.contains(currentTransition)) {
+				this.transitions.add(currentTransition);
+			}
+		}
 	}
 
 	public void pushTransitions(String transition) {
@@ -36,36 +49,24 @@ public class Rule implements Identifier {
 		
 		this.transitions.add(transition);
 	}
-	
-	public void pushTransitions(ArrayList<String> transitions) {
-		for (int i = 0; i < transitions.size(); i++) {
-			String currentTransition = transitions.get(i);
-			
-			if(!this.transitions.contains(currentTransition)) {
-				this.transitions.add(currentTransition);
-			}
-		}
-	} 
-	
+
 	public void removeTransitions(String transition) {
 		if (this.transitions.contains(transition))
 			this.transitions.remove(transition);
 	}
-	
-	public ArrayList< String > getTransitions(){
+
+	public ArrayList<String> getTransitions() {
 		return this.transitions;
 	}
-	
-	public void setTransitions(ArrayList< String > transitions) {
+
+	public void setTransitions(ArrayList<String> transitions) {
 		this.transitions = transitions;
 	}
 
 	public boolean isAnEndElementRule() {
-		if(transitions.size() == 1 && transitions.get(0).length() == 1) {
+		if (transitions.size() == 1 && transitions.get(0).length() == 1) {
 			return Character.isLowerCase(transitions.get(0).charAt(0));
 		}
 		return false;
 	}
 }
-
-

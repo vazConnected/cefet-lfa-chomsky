@@ -1,13 +1,13 @@
 package grammar;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
 public class Chomsky {
 	
 	private static HashSet<Rule> getRuleInstances(Rule rule, Grammar grammar) {
+		@SuppressWarnings("unchecked")
 		HashSet<Rule> allRules = (HashSet<Rule>) grammar.rules.clone();
 		
 		HashSet<Rule> ruleInstances = new HashSet<Rule>();
@@ -29,21 +29,56 @@ public class Chomsky {
 		return ruleInstances;
 	}
 	
-	private static Grammar removeLambdaRules(Grammar grammar) {
-		HashSet<Rule> lambdaRules = grammar.getAllLambdaRules(); // Diretas e Indiretas
+	private static HashSet<String> getNewCombinations(HashSet<Rule> lambdaRules, String transition){
+		HashSet<String> newCombinations = new HashSet<String>();
+		newCombinations.add(transition);
 		
-		HashSet<Rule> allRules = (HashSet<Rule>) grammar.rules.clone();
-		Iterator<Rule> allRulesIterator = allRules.iterator();
-		while (allRulesIterator.hasNext()) {
-			Rule currentRule = allRulesIterator.next();
+		Iterator<Rule> lambdaRulesIterator = lambdaRules.iterator();
+		while (lambdaRulesIterator.hasNext()) {
+			Rule currentLambdaRule = lambdaRulesIterator.next();
+			String currentLambdaRuleIdentifier = currentLambdaRule.getIdentifier().toString();
 			
-			
-			// Obter novas combinacoes
-			
+			if (transition.contains(currentLambdaRuleIdentifier)) {
+				String transition_copy = transition;
+				transition_copy = transition_copy.replaceFirst(currentLambdaRuleIdentifier, "");
+				if ( !transition_copy.isEmpty() || !transition_copy.isBlank())
+					newCombinations.addAll( Chomsky.getNewCombinations(lambdaRules, transition_copy) );	
+			}
 		}
 		
-		// Excluir transicoes lambda
+		return newCombinations;
+	}
+	
+	private static Grammar removeLambdaRules(Grammar grammar) {
+		HashSet<Rule> lambdaRuleInstances = new HashSet<Rule>();
+		HashSet<Rule> lambdaRules = grammar.getAllLambdaRules(); // Diretas e Indiretas
+		
+		// Obter regras em que transicoes para regras lambda aparecem
 		Iterator<Rule> lambdaRulesIterator = lambdaRules.iterator();
+		while (lambdaRulesIterator.hasNext()) {
+			Rule currentLambdaRule = lambdaRulesIterator.next();
+			lambdaRuleInstances.addAll(Chomsky.getRuleInstances(currentLambdaRule, grammar));
+		}
+		
+		// Obter novas combinacoes de transicoes
+		HashSet<Rule> rulesToOverride = new HashSet<Rule>();
+		Iterator<Rule> lambdaRuleInstancesIterator = lambdaRuleInstances.iterator();
+		while (lambdaRuleInstancesIterator.hasNext()) {
+			Rule currentLambdaRuleInstance = lambdaRuleInstancesIterator.next();
+			HashSet<String> newCombinations = new HashSet<String>();
+			
+			ArrayList<String> transitions = currentLambdaRuleInstance.getTransitions();
+			for (int i = 0; i < transitions.size(); i++) {
+				newCombinations.addAll( Chomsky.getNewCombinations(lambdaRules, transitions.get(i)) );
+			}
+			
+			currentLambdaRuleInstance.pushTransitions(newCombinations);
+			rulesToOverride.add(currentLambdaRuleInstance);
+		}
+		grammar.rules.addAll(rulesToOverride);
+		
+		// Excluir transicoes lambda
+		lambdaRulesIterator = lambdaRules.iterator();
 		while (lambdaRulesIterator.hasNext()) {
 			Rule currentRule = lambdaRulesIterator.next();
 			ArrayList<String> transitions = currentRule.getTransitions();
