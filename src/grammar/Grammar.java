@@ -1,6 +1,7 @@
 package grammar;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -64,6 +65,31 @@ public class Grammar {
 	public void addRule(Rule rule) {
 		rules.add(rule);
 		rulesMap.put(rule.getIdentifier(), rule);
+	}
+	
+	public void addRules(Collection<Rule> rules) {
+		Iterator<Rule> rulesIterator = rules.iterator();
+		while (rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			this.rulesMap.put(currentRule.getIdentifier(), currentRule);
+		}
+		
+		this.rules.addAll(rules);
+	}
+	
+	public void removeRule(Rule rule) {
+		rules.remove(rule);
+		rulesMap.remove(rule.getIdentifier(), rule);
+	}
+	
+	public void removeRules(Collection<Rule> rules) {
+		Iterator<Rule> rulesIterator = rules.iterator();
+		while (rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			this.rulesMap.remove(currentRule.getIdentifier());
+		}
+		
+		this.rules.removeAll(rules);
 	}
 	
 	private HashSet<Rule> getLambdaRulesHS(){
@@ -138,6 +164,16 @@ public class Grammar {
 		} while (lambdaRulesHS_oldSize != lambdaRules_HS.size());
 		
 		return lambdaRules_HS;
+	}
+	
+	public void removeDuplicateTransitions() {
+		Iterator<Rule> rulesIterator = rules.iterator();
+		while(rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			HashSet<String> transitions = new HashSet<String>(currentRule.getTransitions());
+			currentRule.setTransitions(transitions);
+			rules.add(currentRule);
+		}
 	}
 	
 	private void rulesToHashMap() {

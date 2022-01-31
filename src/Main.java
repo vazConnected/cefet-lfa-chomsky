@@ -97,7 +97,7 @@ public class Main {
 			}
 
 			if(transitionsString.length() > 2)
-				transitionsString = transitionsString.substring(0, transitionsString.length() -2);
+				transitionsString = transitionsString.substring(0, transitionsString.length() - 2);
 			
 			System.out.println(currentRule.getIdentifier().toString() + " -> " + transitionsString);
 		}

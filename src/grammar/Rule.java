@@ -50,17 +50,21 @@ public class Rule implements Identifier {
 		this.transitions.add(transition);
 	}
 
-	public void removeTransitions(String transition) {
+	public void removeTransition(String transition) {
 		if (this.transitions.contains(transition))
 			this.transitions.remove(transition);
+	}
+	
+	public void removeTransitions(Collection<String> transitions) {
+		this.transitions.remove(transitions);
 	}
 
 	public ArrayList<String> getTransitions() {
 		return this.transitions;
 	}
 
-	public void setTransitions(ArrayList<String> transitions) {
-		this.transitions = transitions;
+	public void setTransitions(Collection<String> transitions) {
+		this.transitions = new ArrayList<String>(transitions);
 	}
 
 	public boolean isAnEndElementRule() {
