@@ -6,16 +6,50 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 public class Chomsky {
-	private static Grammar removeLambdaRules(Grammar grammar) {
-		Iterator<Rule> rulesIterator = grammar.rules.iterator();
-
+	
+	private static HashSet<Rule> getRuleInstances(Rule rule, Grammar grammar) {
+		HashSet<Rule> allRules = (HashSet<Rule>) grammar.rules.clone();
+		
+		HashSet<Rule> ruleInstances = new HashSet<Rule>();
+		String ruleIdentifier = rule.getIdentifier().toString();
+		
+		Iterator<Rule> rulesIterator = allRules.iterator();
 		while (rulesIterator.hasNext()) {
 			Rule currentRule = rulesIterator.next();
 			ArrayList<String> transitions = currentRule.getTransitions();
-			while (transitions.contains("#")) {
-				transitions.remove("#");
+			
+			for (int i = 0; i < transitions.size(); i++) {
+				String currentTransition = transitions.get(i);
+				
+				if (currentTransition.contains(ruleIdentifier))
+					ruleInstances.add(currentRule);
 			}
 		}
+		
+		return ruleInstances;
+	}
+	
+	private static Grammar removeLambdaRules(Grammar grammar) {
+		HashSet<Rule> lambdaRules = grammar.getAllLambdaRules(); // Diretas e Indiretas
+		
+		HashSet<Rule> allRules = (HashSet<Rule>) grammar.rules.clone();
+		Iterator<Rule> allRulesIterator = allRules.iterator();
+		while (allRulesIterator.hasNext()) {
+			Rule currentRule = allRulesIterator.next();
+			
+			
+			// Obter novas combinacoes
+			
+		}
+		
+		// Excluir transicoes lambda
+		Iterator<Rule> lambdaRulesIterator = lambdaRules.iterator();
+		while (lambdaRulesIterator.hasNext()) {
+			Rule currentRule = lambdaRulesIterator.next();
+			ArrayList<String> transitions = currentRule.getTransitions();
+			transitions.remove("#");
+		}
+		grammar.rules.addAll(lambdaRules);
 
 		return grammar;
 	}
@@ -216,7 +250,6 @@ public class Chomsky {
 		grammar = substituteDerivationsWithSizeBiggerThanThree(grammar);
 		return grammar;
 	}
-	
 }
 
 class Substitution{

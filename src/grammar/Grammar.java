@@ -66,6 +66,80 @@ public class Grammar {
 		rulesMap.put(rule.getIdentifier(), rule);
 	}
 	
+	private HashSet<Rule> getLambdaRulesHS(){
+		HashSet<Rule> lambdaRules = new HashSet<Rule>();
+		
+		Iterator<Rule> rulesIterator = this.rules.iterator();
+		while (rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			ArrayList<String> transitions = currentRule.getTransitions();
+			if (transitions.contains("#"))
+				lambdaRules.add(currentRule);
+		}
+		
+		return lambdaRules;
+	}
+	
+	private HashMap<Character, Rule> getLambdaRulesHM(){
+		HashMap<Character, Rule> lambdaRules = new HashMap<Character, Rule>();
+		
+		Iterator<Rule> rulesIterator = this.rules.iterator();
+		while (rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			
+			ArrayList<String> transitions = currentRule.getTransitions();
+			
+			if (transitions.contains("#"))
+				lambdaRules.put(currentRule.getIdentifier(), currentRule);
+		}
+		
+		return lambdaRules;
+	}
+	
+	public HashSet<Rule> getAllLambdaRules(){
+		HashSet<Rule> lambdaRules_HS = this.getLambdaRulesHS();
+		HashMap<Character, Rule> lambdaRules_HM = this.getLambdaRulesHM();
+		
+		// Identificar regras que podem ser lambda indiretamente
+		int lambdaRulesHS_oldSize = 0;
+		do {
+			lambdaRulesHS_oldSize = lambdaRules_HS.size();
+
+			HashSet<Rule> possibleLambdaRules = (HashSet<Rule>) this.rules.clone();
+			possibleLambdaRules.removeAll(lambdaRules_HS);
+			
+			Iterator<Rule> possibleLambdaRulesIterator = possibleLambdaRules.iterator();
+			while (possibleLambdaRulesIterator.hasNext()) {
+				Rule currentRule = possibleLambdaRulesIterator.next();
+				ArrayList<String> transitions = currentRule.getTransitions();
+
+				// Se todos os elementos estiverem contidos no lambdaRules, entao a currentRule e uma lambdaRule
+				boolean currentRuleIsLambdaRule = true;
+				for(int i = 0; i < transitions.size(); i++) {
+					currentRuleIsLambdaRule = true;
+					String currentTransition = transitions.get(i);
+					
+					for (int j = 0; j < currentTransition.length(); j++) {
+						Character currentElement = currentTransition.charAt(j);
+						
+						if (!lambdaRules_HM.containsKey(currentElement))
+							currentRuleIsLambdaRule = false;
+					}
+					
+					if (currentRuleIsLambdaRule) {
+						lambdaRules_HS.add(currentRule);
+						lambdaRules_HM.put(currentRule.getIdentifier(), currentRule);
+						break;
+					}
+				}
+				
+			}
+			// Se o tamanho nao mudou, todas as regras lambda foram encontradas
+		} while (lambdaRulesHS_oldSize != lambdaRules_HS.size());
+		
+		return lambdaRules_HS;
+	}
+	
 	private void rulesToHashMap() {
 		this.rulesMap = new HashMap<Character, Rule>();
 
@@ -75,4 +149,7 @@ public class Grammar {
 			this.rulesMap.put(currentRule.getIdentifier(), currentRule);
 		}
 	}
+
+
+
 }
