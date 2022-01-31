@@ -178,8 +178,8 @@ public class Chomsky {
 				if (currentTransition.length() >= 2) {
 					for (int j = 0; j < currentTransition.length(); j++) {
 						Character oldElement = currentTransition.charAt(j);
-
-						if ( Character.isLowerCase(oldElement) ) {
+						
+						if ( Character.isLowerCase(oldElement) || !Character.isAlphabetic(oldElement)) {
 							ArrayList<String> transition = new ArrayList<String>();
 							transition.add( oldElement.toString() );
 							
