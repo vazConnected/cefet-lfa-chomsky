@@ -65,26 +65,14 @@ public class Main {
 		String start = glc.getString(3);
 		HashSet<Rule> rulesInHashSet = new HashSet<Rule>(rules.values());
 		Grammar grammar = new Grammar(start, elements, rulesInHashSet);
-		
-		
-		// Antes
-		Main.printFormatedGrammar(grammar);
-		
-		// Traduzir G para FNC
-		grammar = Chomsky.applyChomsky(grammar);
-		System.out.println("------------");
 
-		// Depois
-		Main.printFormatedGrammar(grammar);
+		// Main.printFormatedGrammar(grammar);// Antes
+		grammar = Chomsky.applyChomsky(grammar); // Traduzir G para FNC
+		//Main.printFormatedGrammar(grammar);// Depois
 		
-		/*
-		 * Testes de leitura do JSON System.out.println(states.toString());
-		 * System.out.println(symbols.toString());
-		 * System.out.println(transitions.toString());
-		 * System.out.println(start.toString());
-		 */
+		Main.printGrammarInJSON(grammar);
 	}
-
+	
 	private static void printFormatedGrammar(Grammar grammar) {
 		Iterator <Rule> rulesIterator = grammar.rules.iterator();
 		while(rulesIterator.hasNext()) {
@@ -103,5 +91,50 @@ public class Main {
 		}
 	}
 	
-	private static void printGrammarInJSON() {}
+	private static void printGrammarInJSON(Grammar grammar) {
+		System.out.println("{ \"glc\": [");
+		
+		// Imprimir regras
+		Iterator<Rule> rulesIterator = grammar.rules.iterator();
+		System.out.print("    [");
+		while (rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			System.out.print("\"" + currentRule.getIdentifier() + "\"");
+			if (rulesIterator.hasNext()) System.out.print(", ");
+		}
+		System.out.print("]");
+		
+		// Imprimir elementos
+		Iterator<Element> elementsIterator = grammar.alphabet.iterator();
+		System.out.print("\n    [");
+		while (elementsIterator.hasNext()) {
+			Element currentElement = elementsIterator.next();
+			System.out.print("\"" + currentElement.getIdentifier() + "\"");
+			if (elementsIterator.hasNext()) System.out.print(", ");
+		}
+		System.out.print("]");
+		
+		// Imprimir transicoes
+		rulesIterator = grammar.rules.iterator();
+		System.out.print("\n    [");
+		while (rulesIterator.hasNext()) {
+			Rule currentRule = rulesIterator.next();
+			String identifier = currentRule.getIdentifier().toString();
+			ArrayList<String> transitions = currentRule.getTransitions();
+			
+			Iterator<String> transitionsIterator = transitions.iterator();
+			while (transitionsIterator.hasNext()) {
+				String transition = transitionsIterator.next();
+				System.out.print("\n    [");
+				System.out.print("\"" + identifier + "\", \"" + transition + "\"]");
+				if (elementsIterator.hasNext()) System.out.print(", ");
+			}
+		}
+		System.out.print("\n    ],\n");
+		
+		// Imprimir regra inicial
+		System.out.println("    \"" + grammar.initialRuleIdentifier + "\"");
+		
+		System.out.println("]}");
+	}
 }
