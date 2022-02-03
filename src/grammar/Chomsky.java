@@ -5,6 +5,54 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 public class Chomsky {
+	private static boolean unitaryRuleExists(Grammar grammar) {
+		@SuppressWarnings("unchecked")
+		HashSet<Rule> rules = (HashSet<Rule>) grammar.rules.clone();
+		Iterator<Rule> rulesIterator = rules.iterator();
+		
+		while (rulesIterator.hasNext()) {
+			ArrayList<String> transitions = rulesIterator.next().getTransitions();
+			
+			for(int i = 0; i < transitions.size(); i++) {
+				String currentTransition = transitions.get(i);
+				
+				if (currentTransition.length() == 1 ) {
+					Character identifier = currentTransition.charAt(0);
+					if (Character.isUpperCase(identifier))
+						return true;
+				}	
+			}
+		}
+		
+		return false;
+	}
+	
+	private static Grammar updateAlphabet(Grammar grammar) {
+		HashSet<Character> alphabet = new HashSet<Character>();
+		
+		Iterator<Rule> ruleIterator = grammar.rules.iterator();
+		while (ruleIterator.hasNext()) {
+			Rule rule = ruleIterator.next();
+			
+			ArrayList<String> transitions = rule.getTransitions();
+			Iterator<String> transitionIterator = transitions.iterator();
+			while ( transitionIterator.hasNext() ) {
+				String currentTransition = transitionIterator.next();
+				
+				for (int i = 0; i < currentTransition.length(); i++) {
+					char currentElement = currentTransition.charAt(i);
+					
+					if ( !Character.isAlphabetic(currentElement) || Character.isLowerCase(currentElement) ) {
+						alphabet.add(currentElement);
+					}
+				}
+			}
+			
+		}
+		
+		grammar.alphabet = alphabet;
+		return grammar;
+	}
 	
 	private static HashSet<Rule> getRuleInstances(Rule rule, Grammar grammar) {
 		@SuppressWarnings("unchecked")
@@ -91,6 +139,7 @@ public class Chomsky {
 	}
 
 	private static Grammar removeUnitaryRules(Grammar grammar) {
+		@SuppressWarnings("unchecked")
 		HashSet<Rule> allRules = (HashSet<Rule>) grammar.rules.clone();
 
 		Iterator<Rule> rulesIterator = allRules.iterator();		
@@ -108,7 +157,6 @@ public class Chomsky {
 				if (unitaryTransition && transitionToRule) {
 					Rule ruleToGetTransitions = grammar.rulesMap.get(currentTransition.charAt(0));
 					
-					Iterator<Rule> _rulesIterator = grammar.rules.iterator();
 					currentRule.pushTransitions(ruleToGetTransitions.getTransitions());
 					currentRule.removeTransition(currentTransition);
 				}
@@ -268,31 +316,10 @@ public class Chomsky {
 			grammar.addRule(currentRule);
 		}
 		
-		
+		grammar = Chomsky.updateAlphabet(grammar);
 		return grammar;
 	}
 	
-	private static boolean unitaryRuleExists(Grammar grammar) {
-		HashSet<Rule> rules = (HashSet<Rule>) grammar.rules.clone();
-		Iterator<Rule> rulesIterator = rules.iterator();
-		
-		while (rulesIterator.hasNext()) {
-			ArrayList<String> transitions = rulesIterator.next().getTransitions();
-			
-			for(int i = 0; i < transitions.size(); i++) {
-				String currentTransition = transitions.get(i);
-				
-				if (currentTransition.length() == 1 ) {
-					Character identifier = currentTransition.charAt(0);
-					if (Character.isUpperCase(identifier))
-						return true;
-				}	
-			}
-		}
-		
-		return false;
-	}
-
 	public static Grammar applyChomsky(Grammar grammar) {
 		grammar = removeLambdaRules(grammar);
 		

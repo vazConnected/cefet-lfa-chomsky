@@ -9,11 +9,11 @@ import java.util.Random;
 
 public class Grammar {
 	public String initialRuleIdentifier;
-	public HashSet<Element> alphabet;
+	public HashSet<Character> alphabet;
 	public HashSet<Rule> rules;
 	public HashMap<Character, Rule> rulesMap;
 
-	public Grammar(String initialRuleIdentifier, HashSet<Element> alphabet, HashSet<Rule> rules) {
+	public Grammar(String initialRuleIdentifier, HashSet<Character> alphabet, HashSet<Rule> rules) {
 		this.initialRuleIdentifier = initialRuleIdentifier;
 		this.alphabet = alphabet;
 		this.rules = rules;

@@ -31,19 +31,20 @@ public class Main {
 		JSONArray glc = object.getJSONArray("glc");
 
 		// Cadastrar elementos
-		HashSet<Element> elements = new HashSet<Element>();
+		HashSet<Character> elements = new HashSet<Character>();
 		JSONArray symbols = glc.getJSONArray(1);
 		for (int i = 0; i < symbols.length(); i++) {
-			elements.add(new Element(symbols.get(i).toString().charAt(0)));
+			Character c = symbols.get(i).toString().charAt(0);
+			elements.add(c);
 		}
 
 		// Cadastrar regras
 		HashMap<Character, Rule> rules = new HashMap<Character, Rule>();
 		JSONArray states = glc.getJSONArray(0);
 		for (int i = 0; i < states.length(); i++) {
-			Element identifier = new Element(states.getString(i).toString().charAt(0));
-			Rule currentRule = new Rule(identifier.getIdentifier());
-			rules.put(identifier.getIdentifier(), currentRule);
+			Character identifier = states.getString(i).toString().charAt(0);
+			Rule currentRule = new Rule(identifier);
+			rules.put(identifier, currentRule);
 		}
 
 		// Inserir transicoes nas regras
@@ -105,11 +106,11 @@ public class Main {
 		System.out.print("]");
 		
 		// Imprimir elementos
-		Iterator<Element> elementsIterator = grammar.alphabet.iterator();
+		Iterator<Character> elementsIterator = grammar.alphabet.iterator();
 		System.out.print("\n    [");
 		while (elementsIterator.hasNext()) {
-			Element currentElement = elementsIterator.next();
-			System.out.print("\"" + currentElement.getIdentifier() + "\"");
+			Character currentElement = elementsIterator.next();
+			System.out.print("\"" + currentElement + "\"");
 			if (elementsIterator.hasNext()) System.out.print(", ");
 		}
 		System.out.print("]");

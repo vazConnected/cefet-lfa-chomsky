@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class Rule implements Identifier {
+public class Rule {
 	private Character identifier;
 	private ArrayList<String> transitions;
 
@@ -27,7 +27,6 @@ public class Rule implements Identifier {
 		return false;
 	}
 
-	@Override
 	public Character getIdentifier() {
 		return this.identifier;
 	}
