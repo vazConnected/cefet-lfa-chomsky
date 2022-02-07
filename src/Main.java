@@ -103,7 +103,7 @@ public class Main {
 			System.out.print("\"" + currentRule.getIdentifier() + "\"");
 			if (rulesIterator.hasNext()) System.out.print(", ");
 		}
-		System.out.print("]");
+		System.out.print("],");
 		
 		// Imprimir elementos
 		Iterator<Character> elementsIterator = grammar.alphabet.iterator();
@@ -113,7 +113,7 @@ public class Main {
 			System.out.print("\"" + currentElement + "\"");
 			if (elementsIterator.hasNext()) System.out.print(", ");
 		}
-		System.out.print("]");
+		System.out.print("],");
 		
 		// Imprimir transicoes
 		rulesIterator = grammar.rules.iterator();
@@ -127,7 +127,7 @@ public class Main {
 			while (transitionsIterator.hasNext()) {
 				String transition = transitionsIterator.next();
 				System.out.print("\n    [");
-				System.out.print("\"" + identifier + "\", \"" + transition + "\"]");
+				System.out.print("\"" + identifier + "\", \"" + transition + "\"],");
 				if (elementsIterator.hasNext()) System.out.print(", ");
 			}
 		}
